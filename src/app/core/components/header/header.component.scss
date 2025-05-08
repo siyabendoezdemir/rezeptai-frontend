@@ -1,0 +1,59 @@
+.header {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  padding: 0.5rem 0 0 0;
+  background: transparent;
+  border: none;
+  z-index: 10;
+}
+
+.header-content {
+  width: 100%;
+  max-width: 100vw;
+  margin: 0;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 56px;
+  box-sizing: border-box;
+}
+
+.logo h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary-text);
+  margin: 0;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: var(--accent-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.avatar-placeholder span {
+  color: white;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
