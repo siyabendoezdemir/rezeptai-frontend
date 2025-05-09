@@ -26,7 +26,13 @@ export class RecipeSectionComponent implements OnInit {
     this.recipeService.getRecipes().subscribe({
       next: (response) => {
         console.log('Recipes loaded successfully:', response);
-        this.recipes = response.content;
+        this.recipes = response.content
+          .sort((a: Recipe, b: Recipe) => {
+            const dateA = new Date(a.createdAt[0], a.createdAt[1] - 1, a.createdAt[2], a.createdAt[3] || 0, a.createdAt[4] || 0, a.createdAt[5] || 0);
+            const dateB = new Date(b.createdAt[0], b.createdAt[1] - 1, b.createdAt[2], b.createdAt[3] || 0, b.createdAt[4] || 0, b.createdAt[5] || 0);
+            return dateB.getTime() - dateA.getTime();
+          })
+          .slice(0, 9);
         this.loading = false;
       },
       error: (error: HttpErrorResponse) => {

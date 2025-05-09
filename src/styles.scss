@@ -24,6 +24,8 @@ body {
   background-color: var(--primary-bg);
   color: var(--primary-text);
   min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
 }
 
 .container {
@@ -31,4 +33,23 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
+}
+
+/* Ensure global overlays work */
+.global-overlay {
+  position: fixed;
+  z-index: 2147483647;
+  inset: 0;
+  isolation: isolate;
+}
+
+/* Add animations for the body-level drawer */
+@keyframes drawer-slide-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

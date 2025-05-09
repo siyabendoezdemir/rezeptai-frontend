@@ -28,7 +28,7 @@
     <h4>Zutaten</h4>
     <ul>
       @for (ingredient of recipe.ingredients.slice(0, 3); track ingredient) {
-        <li>{{ ingredient }}</li>
+        <li><span class="ingredient-text">{{ ingredient }}</span></li>
       }
       @if (recipe.ingredients.length > 3) {
         <li class="more-items">+ {{ recipe.ingredients.length - 3 }} weitere</li>
