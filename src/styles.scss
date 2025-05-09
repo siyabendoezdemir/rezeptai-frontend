@@ -5,15 +5,16 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: ui-sans-serif, -apple-system, system-ui, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
 :root {
   --primary-bg: #0f0f0f;
   --secondary-bg: #1a1a1a;
-  --primary-text: #ffffff;
+  --primary-text: #fff;
   --secondary-text: #cccccc;
   --accent-color: #4d8aff;
-  --border-color: #333333;
+  --border-color: #444;
   --input-bg: #2a2a2a;
   --card-bg: #222222;
 }
