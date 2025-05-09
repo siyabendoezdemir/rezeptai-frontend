@@ -1,0 +1,115 @@
+<div class="bg-white min-h-screen recipe-blog-root">
+  <!-- Fixed progress bar (optional, can be implemented with Angular animations) -->
+  <div class="progress-bar"></div>
+
+  <!-- Navbar background bar -->
+  <div class="navbar-bg"></div>
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-content">
+        <!-- Left: Logo -->
+        <div class="navbar-logo">
+          <a routerLink="/" class="navbar-logo-link">
+            <span class="navbar-logo-text">RezeptAI</span>
+          </a>
+        </div>
+        <!-- Center: Links -->
+        <div class="navbar-links">
+          <a *ngFor="let link of navbarLinks" [routerLink]="link.route" class="navbar-link">{{ link.label }}</a>
+        </div>
+        <!-- Right: Auth Button (placeholder) -->
+        <div class="navbar-auth">
+          <button class="navbar-signin-btn" routerLink="/">Try RezeptAI</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Full-width banner header -->
+  <div class="recipe-hero-header">
+    <div class="container">
+      <div class="hero-header-grid">
+        <!-- Left column: meta and title -->
+        <div class="hero-header-content">
+          <div class="meta-row">
+            <span class="category-pill">Rezept</span>
+            <span class="publish-date">Veröffentlicht {{ createdAtDate ? (createdAtDate | date:'mediumDate') : '' }}</span>
+          </div>
+          <h1 class="hero-title">{{ recipe?.title }}</h1>
+          <div class="hero-info-bar">
+            <span class="info-item">
+              <span class="info-icon">⏱️</span>
+              <span>{{ totalTime !== null ? totalTime + ' Min' : '' }}</span>
+            </span>
+            <span class="info-item">
+              <span class="info-icon">🍽️</span>
+              <span>{{ recipe?.servings }} Portionen</span>
+            </span>
+          </div>
+        </div>
+        <!-- Right column: quote card with description -->
+        <div class="hero-header-quote-card" *ngIf="recipe?.description">
+          <blockquote>
+            <span class="quote-icon">"</span>
+            <span class="quote-text">{{ recipe?.description }}</span>
+          </blockquote>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Three-column layout -->
+  <div class="container recipe-blog-container">
+    <div class="recipe-blog-grid">
+      <!-- Column 1: Ingredients Sidebar -->
+      <aside class="toc-col">
+        <div class="toc-sticky ingredients-card">
+          <div class="toc-title">Zutaten</div>
+          <ul class="ingredients-list">
+            @for (ingredient of recipe?.ingredients ?? []; track ingredient) {
+              <li>{{ ingredient }}</li>
+            }
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Column 2: Main Content -->
+      <main class="main-col">
+        <article class="main-article-card">
+          <section id="zubereitung" class="instructions-section">
+            <h2>Zubereitung</h2>
+            <div class="instructions-content">
+              <app-markdown-renderer [content]="recipe?.instructions || ''"></app-markdown-renderer>
+            </div>
+          </section>
+        </article>
+      </main>
+
+      <!-- Column 3: Sidebar/Ad -->
+      <aside class="sidebar-col">
+        <div class="sidebar-sticky">
+          <div class="sidebar-card">
+            <h3>Aktionen</h3>
+            <button class="accent-btn">Rezept speichern</button>
+            <button class="accent-btn">Teilen</button>
+          </div>
+          <div class="sidebar-card">
+            <h3>Weitere Rezepte</h3>
+            <p>Hier könnten weitere Empfehlungen stehen.</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading recipe...</p>
+    </div>
+  } @else if (error) {
+    <div class="error-state">
+      <p>{{ error }}</p>
+    </div>
+  }
+</div> 

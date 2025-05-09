@@ -1,13 +1,44 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RecipeCardComponent } from '../../shared/components/recipe-card/recipe-card.component';
+import { RecipeService, Recipe } from '../../core/services/recipe.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-recipe-section',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RecipeCardComponent],
   templateUrl: './recipe-section.component.html',
-  styleUrl: './recipe-section.component.scss'
+  styleUrls: ['./recipe-section.component.scss']
 })
-export class RecipeSectionComponent {
+export class RecipeSectionComponent implements OnInit {
+  recipes: Recipe[] = [];
+  loading = true;
+  error: string | null = null;
 
+  constructor(private recipeService: RecipeService) {}
+
+  ngOnInit() {
+    this.loadRecipes();
+  }
+
+  private loadRecipes() {
+    this.recipeService.getRecipes().subscribe({
+      next: (response) => {
+        console.log('Recipes loaded successfully:', response);
+        this.recipes = response.content;
+        this.loading = false;
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Error loading recipes:', {
+          status: error.status,
+          statusText: error.statusText,
+          error: error.error,
+          message: error.message
+        });
+        this.error = `Failed to load recipes (${error.status}): ${error.statusText}`;
+        this.loading = false;
+      }
+    });
+  }
 }

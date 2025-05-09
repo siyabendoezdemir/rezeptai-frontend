@@ -1,13 +1,27 @@
-<section class="recipe-section">
+<section class="recipe-section" id="recipe-section">
   <div class="container">
     <div class="section-header">
       <h2 class="section-title">Was andere gerade kochen</h2>
     </div>
     <div class="recipe-grid">
-      <!-- Recipe cards will be added here later -->
-      <div class="placeholder-message">
-        <p>Hier werden später Rezept-Karten angezeigt.</p>
-      </div>
+      @if (loading) {
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Loading recipes...</p>
+        </div>
+      } @else if (error) {
+        <div class="error-state">
+          <p>{{ error }}</p>
+        </div>
+      } @else if (recipes.length === 0) {
+        <div class="empty-state">
+          <p>No recipes found.</p>
+        </div>
+      } @else {
+        @for (recipe of recipes; track recipe.id) {
+          <app-recipe-card [recipe]="recipe"></app-recipe-card>
+        }
+      }
     </div>
   </div>
 </section>
