@@ -51,8 +51,8 @@ export const appConfig: ApplicationConfig = {
         headerName: 'X-XSRF-TOKEN',
       })
     ),    
-    provideEnvironmentInitializer(() => {
-        inject(AppAuthService).initAuth().finally()}
+    provideEnvironmentInitializer(() => 
+        inject(AppAuthService).initAuth()
     )  
   ]
 };

@@ -1,0 +1,135 @@
+:host {
+  display: block;
+  background-color: #f4f7f6;
+  min-height: 100vh;
+}
+
+.admin-page-container {
+  padding: 2rem 3rem;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: #333;
+
+  h1 {
+    font-size: 2.25rem;
+    font-weight: 500;
+    color: #2c3e50;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 1rem;
+  }
+}
+
+.loading-spinner-container,
+.error-message,
+.no-recipes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  margin-top: 2rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  font-size: 1.1rem;
+  color: #555;
+
+  p {
+    margin-top: 1rem;
+  }
+}
+
+.error-message {
+  border-left: 4px solid #e74c3c;
+  p {
+    color: #e74c3c;
+    font-weight: 500;
+  }
+}
+
+.no-recipes {
+  border-left: 4px solid #3498db;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.recipes-table-container {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  margin-top: 1.5rem;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    
+    th, td {
+      padding: 1rem 1.25rem;
+      text-align: left;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    th {
+      background-color: #f8f9fa;
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    tr {
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    tbody tr:hover {
+      background-color: #f1f5f9;
+    }
+
+    td {
+      font-size: 0.95rem;
+      color: #333;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+  }
+}
+
+.action-btn {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.85rem;
+  transition: all 0.2s ease-in-out;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.delete-btn {
+  @extend .action-btn;
+  background-color: #e74c3c;
+  color: white;
+
+  &:hover {
+    background-color: #c0392b;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+  }
+} 

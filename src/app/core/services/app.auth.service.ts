@@ -34,14 +34,24 @@ export class AppAuthService {
     return this._accessToken;
   }
 
-  async initAuth(): Promise<any> {
-    return new Promise<void>(() => {
-      this.oauthService.configure(this.authConfig);
-      this.oauthService.events
-        .subscribe(e => this.handleEvents(e));
-      this.oauthService.loadDiscoveryDocumentAndTryLogin();
-      this.oauthService.setupAutomaticSilentRefresh();
+  public initAuth(): Promise<void> {
+    this.oauthService.configure(this.authConfig);
+    this.oauthService.events.subscribe(e => {
+      this.handleEvents(e);
     });
+
+    this.oauthService.setupAutomaticSilentRefresh();
+
+    return this.oauthService.loadDiscoveryDocumentAndTryLogin()
+      .then(() => {
+        if (!this._decodedAccessToken && this.oauthService.hasValidAccessToken()) {
+            console.warn("AppAuthService.initAuth: Valid token exists but was not processed by events. Manually refreshing internal state.");
+            this.handleEvents(null);
+        }
+      })
+      .catch(error => {
+        console.error('AppAuthService.initAuth: Error during loadDiscoveryDocumentAndTryLogin: ', error);
+      });
   }
 
   public getRoles(): Observable<Array<string>> {

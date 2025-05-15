@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { AppAuthService } from './app.auth.service';
 
 export interface Recipe {
   id: number;
@@ -27,11 +28,15 @@ export interface RecipeResponse {
 export class RecipeService {
   private apiUrl = 'http://localhost:9090/api/recipes';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private appAuthService: AppAuthService
+  ) {}
 
   getRecipes(): Observable<RecipeResponse> {
-    console.log('Fetching recipes from:', this.apiUrl);
-    return this.http.get<RecipeResponse>(this.apiUrl).pipe(
+    const url = `${this.apiUrl}?size=2000`;
+    console.log('Fetching recipes from:', url);
+    return this.http.get<RecipeResponse>(url).pipe(
       tap(response => console.log('API Response:', response)),
       catchError(this.handleError)
     );
@@ -42,6 +47,26 @@ export class RecipeService {
     console.log('Fetching recipe from:', url);
     return this.http.get<Recipe>(url).pipe(
       tap(response => console.log('API Response:', response)),
+      catchError(this.handleError)
+    );
+  }
+
+  deleteRecipe(id: string): Observable<void> {
+    const token = this.appAuthService.accessToken;
+
+    if (!token) {
+      console.error('Delete recipe: No access token available.');
+      return throwError(() => new Error('No access token available. Please log in.'));
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    const url = `${this.apiUrl}/${id}`;
+    console.log('Deleting recipe from:', url, 'with explicit Authorization header.');
+    return this.http.delete<void>(url, { headers }).pipe(
+      tap(() => console.log(`Recipe with id=${id} deleted successfully`)),
       catchError(this.handleError)
     );
   }
@@ -60,9 +85,9 @@ export class RecipeService {
       errorMessage = `Error: ${error.error.message}`;
     } else {
       // Server-side error
-      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message || 'Server error'}`;
     }
     
-    return throwError(() => error);
+    return throwError(() => new Error(errorMessage));
   }
 } 
