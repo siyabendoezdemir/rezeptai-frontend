@@ -16,7 +16,7 @@ export function storageFactory(): OAuthStorage {
 }
 
 export function tokenGetter() {
-  return localStorage.getItem('access_token');
+  return sessionStorage.getItem('access_token');
 }
 
 export const appConfig: ApplicationConfig = {
@@ -30,7 +30,7 @@ export const appConfig: ApplicationConfig = {
         JwtModule.forRoot({
           config: {
             tokenGetter: tokenGetter,
-            allowedDomains: ['localhost:8080'], // Update with your Keycloak domain
+            allowedDomains: ['localhost:8080', 'localhost:9090'], // Added backend domain
             disallowedRoutes: []
           }
         }),

@@ -3,6 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginModalComponent } from '../login-modal/login-modal.component';
 import { AuthService } from '../../../core/services/auth.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { finalize } from 'rxjs/operators';
+
+interface RecipeGenerationResponse {
+  id: string;
+  // Add other expected fields from the response if necessary
+}
 
 @Component({
   selector: 'app-search-input',
@@ -16,10 +24,13 @@ export class SearchInputComponent implements AfterViewInit {
   
   private drawerElement: HTMLElement | null = null;
   showLoginModal = false;
+  isLoading = false;
 
   constructor(
     private renderer: Renderer2,
-    private authService: AuthService
+    private authService: AuthService,
+    private http: HttpClient,
+    private router: Router
   ) {}
 
   ngAfterViewInit() {
@@ -30,11 +41,8 @@ export class SearchInputComponent implements AfterViewInit {
     const textarea = this.textareaElement.nativeElement;
     
     textarea.addEventListener('input', () => {
-      // Reset height to auto to get the correct scrollHeight
       textarea.style.height = 'auto';
-      
-      // Set new height based on scrollHeight, but limit it
-      const maxHeight = window.innerHeight * 0.3 - 70; // 30vh minus some padding
+      const maxHeight = window.innerHeight * 0.3 - 70; 
       const newHeight = Math.min(textarea.scrollHeight, maxHeight);
       textarea.style.height = newHeight + 'px';
     });
@@ -42,23 +50,52 @@ export class SearchInputComponent implements AfterViewInit {
 
   onSend(event: Event) {
     event.preventDefault();
+    const prompt: string = this.textareaElement.nativeElement.value.trim();
+
+    if (!prompt) {
+      alert('Please enter your ingredients or a recipe idea.');
+      return;
+    }
     
-    // Check if user is logged in
     if (this.authService.isLoggedIn()) {
-      // User is logged in, show the loading drawer
+      this.isLoading = true;
       this.createDrawerInBody();
-      
-      // Prevent scrolling when drawer is open
       this.renderer.setStyle(document.body, 'overflow', 'hidden');
-      
-      // For demo: hide after 2 seconds
-      setTimeout(() => {
-        this.removeDrawerFromBody();
-        // Re-enable scrolling when drawer is closed
-        this.renderer.setStyle(document.body, 'overflow', 'auto');
-      }, 2000);
+
+      const headers = new HttpHeaders({ 'Content-Type': 'text/plain' });
+
+      this.http.post<RecipeGenerationResponse>(
+        'http://localhost:9090/api/ai/recipes/generate',
+        prompt,
+        { headers: headers }
+      )
+        .pipe(
+          finalize(() => {
+            this.isLoading = false;
+            this.removeDrawerFromBody();
+            this.renderer.setStyle(document.body, 'overflow', 'auto');
+            this.textareaElement.nativeElement.value = '';
+            this.textareaElement.nativeElement.style.height = 'auto';
+          })
+        )
+        .subscribe({
+          next: (response) => {
+            if (response && response.id) {
+              this.router.navigate(['/recipe', response.id]);
+            } else {
+              console.error('Recipe ID not found in response:', response);
+              alert('Could not retrieve the generated recipe. Please try again.');
+            }
+          },
+          error: (err) => {
+            console.error('Error generating recipe:', err);
+            const errorMessage = err.error instanceof ProgressEvent || typeof err.error === 'string' 
+                               ? 'An error occurred. Please check backend logs.' 
+                               : err.error?.message || 'An error occurred while generating the recipe. Please try again.';
+            alert(errorMessage);
+          }
+        });
     } else {
-      // User is not logged in, show login modal
       this.showLoginModal = true;
     }
   }
@@ -69,14 +106,18 @@ export class SearchInputComponent implements AfterViewInit {
 
   onLogin() {
     this.showLoginModal = false;
+    const prompt = this.textareaElement.nativeElement.value.trim();
+    if (prompt) {
+      this.onSend(new Event('submit'));
+    }
   }
   
   private createDrawerInBody() {
-    // Create the drawer element
+    if (this.drawerElement) return;
+
     this.drawerElement = this.renderer.createElement('div');
     this.renderer.addClass(this.drawerElement, 'body-level-drawer');
     
-    // Set styles directly
     this.renderer.setStyle(this.drawerElement, 'position', 'fixed');
     this.renderer.setStyle(this.drawerElement, 'top', '0');
     this.renderer.setStyle(this.drawerElement, 'left', '0');
@@ -89,7 +130,6 @@ export class SearchInputComponent implements AfterViewInit {
     this.renderer.setStyle(this.drawerElement, 'justify-content', 'center');
     this.renderer.setStyle(this.drawerElement, 'animation', 'drawer-slide-up 0.35s cubic-bezier(0.4,0,0.2,1)');
     
-    // Create the spinner
     const spinnerContainer = this.renderer.createElement('div');
     this.renderer.setStyle(spinnerContainer, 'display', 'flex');
     this.renderer.setStyle(spinnerContainer, 'flex-direction', 'column');
@@ -104,7 +144,6 @@ export class SearchInputComponent implements AfterViewInit {
     this.renderer.setStyle(spinner, 'animation', 'spin 1s linear infinite');
     this.renderer.setStyle(spinner, 'margin-bottom', '1.5rem');
     
-    // Create the text
     const loadingText = this.renderer.createElement('div');
     this.renderer.setStyle(loadingText, 'font-size', '1.3rem');
     this.renderer.setStyle(loadingText, 'color', '#444');
@@ -112,14 +151,11 @@ export class SearchInputComponent implements AfterViewInit {
     const loadingTextContent = this.renderer.createText('Rezept wird generiert...');
     this.renderer.appendChild(loadingText, loadingTextContent);
     
-    // Add elements to spinner container
     this.renderer.appendChild(spinnerContainer, spinner);
     this.renderer.appendChild(spinnerContainer, loadingText);
     
-    // Add spinner container to drawer
     this.renderer.appendChild(this.drawerElement, spinnerContainer);
     
-    // Add drawer to body
     this.renderer.appendChild(document.body, this.drawerElement);
   }
   
