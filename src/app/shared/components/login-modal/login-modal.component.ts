@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Output, Input } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login-modal',
@@ -39,7 +40,6 @@ import { CommonModule } from '@angular/common';
 export class LoginModalComponent {
   @Output() close = new EventEmitter<void>();
   @Output() login = new EventEmitter<void>();
-  @Input() keycloakUrl: string = '/auth';
 
   benefits = [
     { emoji: '🔍', text: 'Persönliche Rezepte' },
@@ -47,6 +47,8 @@ export class LoginModalComponent {
     { emoji: '📊', text: 'Koch-Statistiken' },
     { emoji: '✨', text: 'Neue Funktionen' }
   ];
+
+  constructor(private authService: AuthService) {}
 
   onBackdropClick(event: MouseEvent) {
     if (event.target === event.currentTarget) {
@@ -59,7 +61,7 @@ export class LoginModalComponent {
   }
 
   onLogin() {
-    window.location.href = this.keycloakUrl;
+    this.authService.login();
     this.login.emit();
   }
 } 

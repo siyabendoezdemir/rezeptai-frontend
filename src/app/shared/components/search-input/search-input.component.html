@@ -10,10 +10,12 @@
         maxlength="4096"
       ></textarea>
       <button type="submit" class="prompt-send">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M3 12L21 3L12 21L11 13L3 12Z" fill="#111"/>
-        </svg>
+        <span class="material-icons">arrow_upward</span>
       </button>
     </div>
   </form>
 </div>
+
+@if (showLoginModal) {
+  <app-login-modal (close)="onLoginModalClose()" (login)="onLogin()"></app-login-modal>
+}

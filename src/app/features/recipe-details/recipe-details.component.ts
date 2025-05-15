@@ -5,6 +5,7 @@ import { RecipeService, Recipe } from '../../core/services/recipe.service';
 import { NAVBAR_LINKS, NavbarLink } from '../../core/config/navbar-links.config';
 import { RouterModule } from '@angular/router';
 import { MarkdownRendererComponent } from '../../shared/components/markdown-renderer/markdown-renderer.component';
+import { ViewportScroller } from '@angular/common';
 
 @Component({
   selector: 'app-recipe-details',
@@ -21,10 +22,14 @@ export class RecipeDetailsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private recipeService: RecipeService
+    private recipeService: RecipeService,
+    private viewportScroller: ViewportScroller
   ) {}
 
   ngOnInit() {
+    // Scroll to top when component initializes
+    this.viewportScroller.scrollToPosition([0, 0]);
+    
     this.route.params.subscribe(params => {
       const id = params['id'];
       if (id) {

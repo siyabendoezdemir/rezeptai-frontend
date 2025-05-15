@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RecipeCardComponent } from '../../shared/components/recipe-card/recipe-card.component';
 import { RecipeService, Recipe } from '../../core/services/recipe.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-recipe-section',
@@ -11,18 +13,38 @@ import { HttpErrorResponse } from '@angular/common/http';
   templateUrl: './recipe-section.component.html',
   styleUrls: ['./recipe-section.component.scss']
 })
-export class RecipeSectionComponent implements OnInit {
+export class RecipeSectionComponent implements OnInit, OnDestroy {
   recipes: Recipe[] = [];
   loading = true;
   error: string | null = null;
+  private routerSubscription: Subscription;
 
-  constructor(private recipeService: RecipeService) {}
+  constructor(
+    private recipeService: RecipeService,
+    private router: Router
+  ) {
+    // Subscribe to router events to reload recipes when navigating back to home
+    this.routerSubscription = this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      if (event.url === '/') {
+        this.loadRecipes();
+      }
+    });
+  }
 
   ngOnInit() {
     this.loadRecipes();
   }
 
+  ngOnDestroy() {
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
+  }
+
   private loadRecipes() {
+    this.loading = true;
     this.recipeService.getRecipes().subscribe({
       next: (response) => {
         console.log('Recipes loaded successfully:', response);
