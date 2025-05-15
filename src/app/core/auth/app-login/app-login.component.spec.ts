@@ -4,7 +4,7 @@ import { AppLoginComponent } from './app-login.component';
 import {AuthConfig, OAuthModule} from 'angular-oauth2-oidc';
 import { HttpClient } from '@angular/common/http';
 import {createSpyFromClass} from 'jasmine-auto-spies';
-import { authConfig } from 'src/app/app.auth';
+import { authConfig } from '../../../app.auth';
 
 describe('AppLoginComponent', () => {
   let component: AppLoginComponent;

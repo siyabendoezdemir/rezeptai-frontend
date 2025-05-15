@@ -2,7 +2,7 @@ import { NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatChip } from '@angular/material/chips';
-import { AppAuthService } from 'src/app/service/app.auth.service';
+import { AppAuthService } from '../../services/app.auth.service';
 import { MatButton } from '@angular/material/button';
 
 @Component({
@@ -21,10 +21,10 @@ export class AppLoginComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.authService.usernameObservable.subscribe(name => {
+    this.authService.usernameObservable.subscribe((name: string) => {
       this.username = name;
     });
-    this.authService.useraliasObservable.subscribe(alias => {
+    this.authService.useraliasObservable.subscribe((alias: string) => {
       this.useralias = alias;
     });
   }
