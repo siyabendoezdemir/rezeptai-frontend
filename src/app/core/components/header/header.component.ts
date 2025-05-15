@@ -31,7 +31,6 @@ interface IdentityClaims {
               </div>
               <app-user-menu
                 [isOpen]="isUserMenuOpen"
-                [userInfo]="userInfo"
                 (logout)="onLogout()"
               ></app-user-menu>
             </div>
@@ -54,7 +53,6 @@ export class HeaderComponent implements OnInit {
   userInitial = 'U';
   isAuthenticated$: Observable<boolean>;
   isUserMenuOpen = false;
-  userInfo: { name?: string; email?: string } = {};
 
   constructor(private authService: AuthService) {
     this.isAuthenticated$ = this.authService.isAuthenticated$;
@@ -62,14 +60,8 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.authService.getIdentityClaims().subscribe((claims: IdentityClaims) => {
-      if (claims) {
-        this.userInfo = {
-          name: claims.name,
-          email: claims.email
-        };
-        if (claims.name) {
-          this.userInitial = claims.name.charAt(0).toUpperCase();
-        }
+      if (claims && claims.name) {
+        this.userInitial = claims.name.charAt(0).toUpperCase();
       }
     });
   }
