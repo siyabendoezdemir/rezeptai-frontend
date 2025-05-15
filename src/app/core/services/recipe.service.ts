@@ -20,6 +20,10 @@ export interface Recipe {
 
 export interface RecipeResponse {
   content: Recipe[];
+  totalPages: number;
+  totalElements: number;
+  number: number; // Current page number
+  size: number; // Page size
 }
 
 @Injectable({
@@ -33,8 +37,8 @@ export class RecipeService {
     private appAuthService: AppAuthService
   ) {}
 
-  getRecipes(): Observable<RecipeResponse> {
-    const url = `${this.apiUrl}?size=2000`;
+  getRecipes(page: number = 0, size: number = 9): Observable<RecipeResponse> {
+    const url = `${this.apiUrl}?page=${page}&size=${size}`;
     console.log('Fetching recipes from:', url);
     return this.http.get<RecipeResponse>(url).pipe(
       tap(response => console.log('API Response:', response)),

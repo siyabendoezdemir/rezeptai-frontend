@@ -3,8 +3,8 @@
     <div class="section-header">
       <h2 class="section-title">Schau, was andere gerade zaubern!</h2>
     </div>
-    <div class="recipe-grid">
-      @if (loading) {
+    <div class="recipe-grid-wrapper">
+      @if (loading && recipes.length === 0) {
         <div class="loading-state">
           <div class="spinner"></div>
           <p>Loading recipes...</p>
@@ -18,10 +18,35 @@
           <p>No recipes found.</p>
         </div>
       } @else {
-        @for (recipe of recipes; track recipe.id) {
-          <app-recipe-card [recipe]="recipe"></app-recipe-card>
+        <div class="recipe-grid">
+          @for (recipe of recipes; track recipe.id) {
+            <app-recipe-card [recipe]="recipe"></app-recipe-card>
+          }
+        </div>
+        @if (loading && recipes.length > 0) {
+          <div class="loading-overlay">
+            <div class="spinner"></div>
+          </div>
         }
       }
     </div>
+    @if (!error && recipes.length > 0 && totalPages > 1) {
+      <div class="pagination-controls">
+        <button (click)="previousPage()" [disabled]="currentPage === 0" class="pagination-button prev-next">
+          &laquo; Prev
+        </button>
+        @for (page of getPages(); track page) {
+          <button 
+            (click)="goToPage(page)" 
+            [class.active]="currentPage === page" 
+            class="pagination-button page-number">
+            {{ page + 1 }}
+          </button>
+        }
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages - 1" class="pagination-button prev-next">
+          Next &raquo;
+        </button>
+      </div>
+    }
   </div>
 </section>

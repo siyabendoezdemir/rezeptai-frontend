@@ -19,6 +19,12 @@ export class RecipeSectionComponent implements OnInit, OnDestroy {
   error: string | null = null;
   private routerSubscription: Subscription;
 
+  // Pagination properties
+  currentPage = 0;
+  pageSize = 9;
+  totalPages = 0;
+  totalElements = 0;
+
   constructor(
     private recipeService: RecipeService,
     private router: Router
@@ -45,7 +51,7 @@ export class RecipeSectionComponent implements OnInit, OnDestroy {
 
   private loadRecipes() {
     this.loading = true;
-    this.recipeService.getRecipes().subscribe({
+    this.recipeService.getRecipes(this.currentPage, this.pageSize).subscribe({
       next: (response) => {
         console.log('Recipes loaded successfully:', response);
         this.recipes = response.content
@@ -53,8 +59,12 @@ export class RecipeSectionComponent implements OnInit, OnDestroy {
             const dateA = new Date(a.createdAt[0], a.createdAt[1] - 1, a.createdAt[2], a.createdAt[3] || 0, a.createdAt[4] || 0, a.createdAt[5] || 0);
             const dateB = new Date(b.createdAt[0], b.createdAt[1] - 1, b.createdAt[2], b.createdAt[3] || 0, b.createdAt[4] || 0, b.createdAt[5] || 0);
             return dateB.getTime() - dateA.getTime();
-          })
-          .slice(0, 9);
+          });
+        // Removed .slice(0, 9) as pagination is now handled by the API
+        this.totalPages = response.totalPages;
+        this.totalElements = response.totalElements;
+        this.currentPage = response.number; // API returns current page (0-indexed)
+        this.pageSize = response.size;
         this.loading = false;
       },
       error: (error: HttpErrorResponse) => {
@@ -68,5 +78,35 @@ export class RecipeSectionComponent implements OnInit, OnDestroy {
         this.loading = false;
       }
     });
+  }
+
+  // Pagination methods
+  goToPage(page: number): void {
+    if (page >= 0 && page < this.totalPages) {
+      this.currentPage = page;
+      this.loadRecipes();
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages - 1) {
+      this.currentPage++;
+      this.loadRecipes();
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 0) {
+      this.currentPage--;
+      this.loadRecipes();
+    }
+  }
+
+  getPages(): number[] {
+    const pages = [];
+    for (let i = 0; i < this.totalPages; i++) {
+      pages.push(i);
+    }
+    return pages;
   }
 }
