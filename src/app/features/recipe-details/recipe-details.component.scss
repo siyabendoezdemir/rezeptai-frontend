@@ -113,7 +113,7 @@
 
 .recipe-blog-grid {
   display: grid;
-  grid-template-columns: 1fr 2.5fr 1fr;
+  grid-template-columns: 1fr;
   gap: 2.5rem;
   align-items: flex-start;
 }
@@ -357,19 +357,9 @@
   align-items: center;
 }
 
+// Mobile-first: hide hero quote card by default
 .hero-header-quote-card {
-  background: rgba(255,255,255,0.13);
-  border-radius: 1.2rem;
-  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.08);
-  padding: 2rem 1.5rem;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 120px;
-  max-width: 420px;
-  margin-left: auto;
-  transform: rotate(1.5deg);
+  display: none;
 }
 
 .hero-header-quote-card blockquote {
@@ -598,4 +588,76 @@
       color: #333;
     }
   }
+}
+
+// Mobile-specific: Hide hero quote card
+.hero-header-quote-card {
+  display: none;
+}
+
+// Desktop ingredients (.toc-col is aliased with .ingredients-desktop)
+.ingredients-desktop {
+  // Default (mobile) is display: none, overridden at desktop breakpoint
+  display: none;
+  position: relative;
+  z-index: 2;
+}
+
+// Mobile ingredients: visible by default (mobile)
+.ingredients-mobile {
+  display: block; // Or flex, grid depending on inner content styling needs
+  margin-bottom: 2rem; // Spacing before main content
+  // Inherits .ingredients-card styles if the inner div has that class, which it does.
+  // Add any specific mobile wrapper styles if needed.
+  .ingredients-card {
+    // border: 1px solid #eee; // Example: give it a border on mobile
+    // box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    background-color: #FFF7E6;
+    border: none; 
+    box-shadow: none;
+    padding: 1rem; // Added slight padding
+  }
+}
+
+// .toc-col is now .ingredients-desktop, keep its original desktop display logic
+// @media (min-width: 1024px) {
+//   .ingredients-desktop { // .toc-col is now .ingredients-desktop
+//     display: block;
+//   }
+// }
+
+.toc-sticky {
+  position: sticky;
+  top: 6.5rem;
+  background: none;
+}
+
+@media (min-width: 1024px) {
+  // Restore hero quote card on desktop
+  .hero-header-quote-card {
+    display: flex;
+  }
+
+  .ingredients-desktop { // This is the original .toc-col
+    display: block;
+  }
+
+  // Hide mobile ingredients on desktop
+  .ingredients-mobile {
+    display: none;
+  }
+
+  .recipe-blog-grid {
+    // Restore three-column layout for desktop
+    grid-template-columns: 1fr 2.5fr 1fr;
+  }
+
+  .sidebar-col {
+    display: block;
+  }
+}
+
+.ingredients-desktop {
+  position: relative;
+  z-index: 2;
 } 

@@ -60,9 +60,21 @@
 
   <!-- Three-column layout -->
   <div class="container recipe-blog-container">
+    <!-- Mobile Ingredients Section (New) -->
+    <aside class="ingredients-mobile">
+      <div class="toc-sticky ingredients-card">
+        <div class="toc-title">Zutaten</div>
+        <ul class="ingredients-list">
+          @for (ingredient of recipe?.ingredients ?? []; track ingredient) {
+            <li>{{ ingredient }}</li>
+          }
+        </ul>
+      </div>
+    </aside>
+
     <div class="recipe-blog-grid">
-      <!-- Column 1: Ingredients Sidebar -->
-      <aside class="toc-col">
+      <!-- Column 1: Ingredients Sidebar (Desktop) -->
+      <aside class="toc-col ingredients-desktop">
         <div class="toc-sticky ingredients-card">
           <div class="toc-title">Zutaten</div>
           <ul class="ingredients-list">
