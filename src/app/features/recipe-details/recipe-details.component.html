@@ -88,14 +88,15 @@
       <!-- Column 3: Sidebar/Ad -->
       <aside class="sidebar-col">
         <div class="sidebar-sticky">
-          <div class="sidebar-card">
-            <h3>Aktionen</h3>
-            <button class="accent-btn">Rezept speichern</button>
-            <button class="accent-btn">Teilen</button>
-          </div>
-          <div class="sidebar-card">
+          <div class="sidebar-card" *ngIf="moreRecipes.length > 0">
             <h3>Weitere Rezepte</h3>
-            <p>Hier könnten weitere Empfehlungen stehen.</p>
+            <ul class="more-recipes-bullet-list">
+              <li *ngFor="let moreRecipe of moreRecipes">
+                <a (click)="navigateToRecipe(moreRecipe.id)" class="more-recipe-link">
+                  {{ moreRecipe.title }}
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
       </aside>

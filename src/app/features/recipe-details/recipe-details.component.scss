@@ -569,4 +569,33 @@
     font-size: 0.92rem;
     padding: 0.35rem 1rem;
   }
+}
+
+.more-recipes-bullet-list {
+  list-style-type: none;
+  padding-left: 0;
+  margin-top: 0.5rem;
+
+  li {
+    margin-bottom: 0.35rem;
+  }
+
+  .more-recipe-link {
+    text-decoration: none !important;
+    color: #333;
+    cursor: pointer;
+    font-weight: 500;
+    display: inline;
+    background-image: linear-gradient(to right, var(--accent-color-marker, #FF8000), var(--accent-color-marker, #FF8000));
+    background-size: 0% 60%;
+    background-repeat: no-repeat;
+    background-position: 0 70%;
+    transition: background-size 0.3s ease-in-out;
+    padding: 0.05em 0;
+
+    &:hover {
+      background-size: 100% 60%;
+      color: #333;
+    }
+  }
 } 
