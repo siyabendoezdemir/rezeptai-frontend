@@ -33,7 +33,7 @@ describe('RecipeService', () => {
 
   beforeEach(() => {
     // AppAuthService methods that might be spied on if needed by RecipeService directly (excluding getters for spyOnProperty)
-    mockAppAuthService = jasmine.createSpyObj('AppAuthService', ['isAuthenticated', 'login', 'logout']);
+    mockAppAuthService = jasmine.createSpyObj('AppAuthService', ['isAuthenticated', 'login', 'logout'], ['accessToken']);
 
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
@@ -130,7 +130,7 @@ describe('RecipeService', () => {
     it('should send a DELETE request to the correct URL with auth token', () => {
       const recipeId = '1';
       const mockToken = 'test-token';
-      spyOnProperty(mockAppAuthService, 'accessToken', 'get').and.returnValue(mockToken);
+      (Object.getOwnPropertyDescriptor(mockAppAuthService, 'accessToken')?.get as jasmine.Spy).and.returnValue(mockToken);
 
       service.deleteRecipe(recipeId).subscribe();
 
@@ -142,7 +142,7 @@ describe('RecipeService', () => {
 
     it('should return an error if no access token is available', () => {
       const recipeId = '1';
-      spyOnProperty(mockAppAuthService, 'accessToken', 'get').and.returnValue('');
+      (Object.getOwnPropertyDescriptor(mockAppAuthService, 'accessToken')?.get as jasmine.Spy).and.returnValue('');
 
       service.deleteRecipe(recipeId).subscribe({
         next: () => fail('should have failed due to no token'),
@@ -157,7 +157,7 @@ describe('RecipeService', () => {
     it('should handle HTTP errors during delete', () => {
       const recipeId = '1';
       const mockToken = 'test-token';
-      spyOnProperty(mockAppAuthService, 'accessToken', 'get').and.returnValue(mockToken);
+      (Object.getOwnPropertyDescriptor(mockAppAuthService, 'accessToken')?.get as jasmine.Spy).and.returnValue(mockToken);
 
       const mockError = new HttpErrorResponse({
         error: 'Deletion failed',
